@@ -10,7 +10,7 @@
 #ifndef RUMICAR_ESP32_H
 #include "RumiCar_esp32.h"
 #endif
-
+#define SERVO
 // Private Variable for timmer task
 #define   UP_SPEED      (200)       // StartUP speed
 #define   UP_TIME       (5)         // 50[ms]
