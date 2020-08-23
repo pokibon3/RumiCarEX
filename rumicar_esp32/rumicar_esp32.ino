@@ -154,7 +154,7 @@ void auto_driving()
       requestTorque = MAX_TORQUE;
     } else {
       curDriveDir = REVERSE;
-      requestTorque = map(s1, STP_DISTANCE_F, MIN_DISTANCE_F, MIN_POWER + dAngle / 2, maxSpeed * MID_SPEED);
+      requestTorque = map(s1, STP_DISTANCE_F, MIN_DISTANCE_F, MIN_POWER + dAngle / 2, maxSpeed * LOW_SPEED);
     }
   } else {
     reverseMode = 0;

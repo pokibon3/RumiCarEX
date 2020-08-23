@@ -12,8 +12,8 @@
 #endif
 #define SERVO
 // Private Variable for timmer task
-#define   UP_SPEED      (200)       // StartUP speed
-#define   UP_TIME       (5)         // 50[ms]
+#define   UP_SPEED      (180)       // StartUP speed
+#define   UP_TIME       (3)         // 50[ms]
 float timer_interval = 0.01;  //seconds
 Ticker Timer1;
 
@@ -96,7 +96,7 @@ void RC_setup()
   // reduce timing budget to 20 ms (default is about 33 ms)
 #ifdef SENSOR_VL53L1X
   sensor0.VL53L1X_SetROI(16 , 8, 60);        // default 60
-  sensor1.VL53L1X_SetROI(16 , 8, 60);        // def 60
+  sensor1.VL53L1X_SetROI(10 , 8, 60);        // def 60
   sensor2.VL53L1X_SetROI(16 , 8, 60);        // def 60
 //  sensor0.setDistanceMode(VL53L1X::Medium);
 //  sensor1.setDistanceMode(VL53L1X::Medium);
