@@ -18,7 +18,7 @@ BluetoothSerial SerialBT;
 #define PILOT_MODE      1         // 1:Auto 2:Manual
 #define MAX_TORQUE      255       // max pwm value
 #define MAX_POWER       230       // 230 max
-#define MIN_POWER       120       // 120 min
+#define MIN_POWER       150       // 120 min
 #define MAX_SPEED       1.0       // max speed factor
 #define MID_SPEED       0.75      // mid speed factor
 #define LOW_SPEED       0.5       // low speed need torque
@@ -301,13 +301,19 @@ void auto_steering()
   //  kerikaeshi
   //=========================================================
   if (reverseMode == 1) {
+//    if (steerDir == RIGHT) {
+//      steerDir = LEFT;                  // counter steer
+//    } else if (steerDir == LEFT) {
+//      steerDir = RIGHT;                 // counter steer
+//    } else {                            // kirikaeshi
+//      steerDir = CENTER;
+//      dAngle = steerMax * 0.7;
+//    }
+    dAngle = steerMax * 0.7;            // kirikaeshi
     if (steerDir == RIGHT) {
       steerDir = LEFT;                  // counter steer
-    } else if (steerDir == LEFT) {
+    } else  {
       steerDir = RIGHT;                 // counter steer
-    } else {                            // kirikaeshi
-      steerDir = CENTER;
-      dAngle = steerMax * 0.7;
     }
   }
   //=========================================================
@@ -452,7 +458,7 @@ void loop()
       }
     } else if (action == 'M') {
       dMode++;
-      if (dMode > 3) dMode = 3;
+      if (dMode > 4) dMode = 4;
     } else if (action == 'm') {
       dMode--;
       if (dMode < 0) dMode = 0;

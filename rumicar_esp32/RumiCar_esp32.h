@@ -4,7 +4,7 @@
 //=========================================================
 #define RUMICAR_ESP32_H
 #define SENSOR_VL53L1X
-#define VL53L1X_RANGE   VL53L1X::Short       // Short Long Medium
+#define VL53L1X_RANGE   VL53L1X::Long       // Short Long Medium
 #define VL53L1X_TB      33000               // Short :20000
 #define VL53L1X_POV_X   10
 #define VL53L1X_POV_Y   8
