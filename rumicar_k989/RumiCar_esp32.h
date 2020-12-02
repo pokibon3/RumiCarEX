@@ -3,7 +3,7 @@
 //  History    : V1.0  2020-08-18 New Create(K.Ohe)
 //=========================================================
 #define RUMICAR_ESP32_H
-#define SENSOR_VL53L1X
+//#define SENSOR_VL53L1X
 #define VL53L1X_RANGE   VL53L1X::Long       // Short Long Medium
 #define VL53L1X_TB      33000               // Short :20000
 #ifdef SENSOR_VL53L1X
@@ -11,6 +11,8 @@
 #else
 #include <VL53L0X.h>
 #endif
+#define SERVO
+#define K989
 // RumiCar include
 
 //操舵用の設定
@@ -54,4 +56,3 @@ extern VL53L0X sensor2;
 #define HIGH_SPEED
 //#define HIGH_ACCURACY
 //#define LONG_RANGE
-

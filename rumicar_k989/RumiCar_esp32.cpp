@@ -34,10 +34,15 @@ int BIN1 = 27;
 int BIN2 = 25;
 int SERVO_PIN = 32;
 Servo Steer_servo;  // create servo object to control a servo
-#define SERVO_TRIM 16           // typ 16
-#define SERVO_LEFT 60           // max 60
-#define SERVO_RIGHT 120         // max 120
+#define SERVO_TRIM 0           // typ 16
 #define SERVO_CENTER 90
+#ifndef K989
+#define SERVO_LEFT   20        // max 60
+#define SERVO_RIGHT 160        // max 120
+#else
+#define SERVO_LEFT  160        // max 60
+#define SERVO_RIGHT  20         // max 120
+#endif
 //=========================================================
 // RC_delay:PWM 周波数変更しているためTimer0を調整
 //=========================================================
@@ -114,6 +119,9 @@ void RC_setup()
   sensor0.setMeasurementTimingBudget(20000);
   sensor1.setMeasurementTimingBudget(20000);
   sensor2.setMeasurementTimingBudget(20000);
+  sensor0.startContinuous();
+  sensor1.startContinuous();
+  sensor2.startContinuous();
 #endif
   //ESP32の場合はピン番号ではなくチャンネルでPWMを行うのでチャンネルとして再設定
 #define PWM_level 8

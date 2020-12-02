@@ -69,13 +69,32 @@ void loop()
   st2 = sensor2.ranging_data.range_status;
 
 #else
-  //s0=sensor0.readRangeContinuousMillimeters();
-  //s1=sensor1.readRangeContinuousMillimeters();
-  //s2=sensor2.readRangeContinuousMillimeters();
-  s0=sensor0.readRangeSingleMillimeters();
-  s1=sensor1.readRangeSingleMillimeters();
-  s2=sensor2.readRangeSingleMillimeters();
+  s0=sensor0.readRangeContinuousMillimeters();
+  s1=sensor1.readRangeContinuousMillimeters();
+  s2=sensor2.readRangeContinuousMillimeters();
+  //s0=sensor0.readRangeSingleMillimeters();
+  //s1=sensor1.readRangeSingleMillimeters();
+  //s2=sensor2.readRangeSingleMillimeters();
 #endif
 
   sensor_print();
+
+  if (abs(s0 - s2) < 50) {
+    RC_steer(CENTER);
+  } else if(s0>s2){
+     RC_steer(LEFT, 100);
+  }else{
+    RC_steer(RIGHT, 100);
+  }
+
+  if(s1<100){
+    RC_drive(BRAKE,255);
+  }else if (s1<150){
+    RC_drive(FORWARD,220);
+  }else if (s1<250){
+    RC_drive(FORWARD,240);
+  }else{
+    RC_drive(FORWARD,255);
+  }
+
 }
