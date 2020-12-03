@@ -78,7 +78,7 @@ void loop()
 #endif
 
   sensor_print();
-  s0 = s2 = 0;  // for debug
+  //s0 = s2 = 0;  // for debug
 
   if (abs(s0 - s2) < 50) {
     RC_steer(CENTER);
@@ -95,7 +95,7 @@ void loop()
   }else if (s1<300){
     RC_drive(FORWARD,160);
   }else{
-    RC_drive(FORWARD,255);
+    RC_drive(FORWARD,200);
   }
 
 }
