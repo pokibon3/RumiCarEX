@@ -1,6 +1,7 @@
 //=========================================================
 //  rumicar_esp32.ino :  RumiCar application
-//  History     : V1.0  2020-08-18 new create 
+//  History     : V1.0  2020-08-18 new create
+//                V2.0  2020-12-04 Support K989
 //=========================================================
 #include <Wire.h>
 #define  EXTERN extern
@@ -17,7 +18,7 @@ BluetoothSerial SerialBT;
 #define DEVICE_NAME     "RumiCar_ESP32" // BLE Device Name
 #define PILOT_MODE      1         // 1:Auto 2:Manual
 #define MAX_TORQUE      255       // max pwm value
-#define MAX_POWER       230       // 230 max
+#define MAX_POWER       180       // 230 max              K989:200
 #define MIN_POWER       150       // 120 min
 #define MAX_SPEED       1.0       // max speed factor
 #define MID_SPEED       0.75      // mid speed factor
@@ -28,7 +29,7 @@ BluetoothSerial SerialBT;
 #define MIN_DISTANCE_W  50        // min distance to wall
 #define MAX_ANGLE       100       // max 100%
 #define LIMIT_ANGLE      30       // max  30%
-#define OVR_DISTANCE_F  800       // 800mm  detect straight
+#define OVR_DISTANCE_F  500       // 800mm  detect straight  500:K989
 #define MAX_DISTANCE_F  300       // 300mm  detect front wall
 #define MID_DISTANCE_F  200       // 200mm  speed down distance
 #define MIN_DISTANCE_F  100       // 100mm  reverse start distance
@@ -434,12 +435,12 @@ void loop()
    else           s2 = ps2;  
 
 #else
-  //s0=sensor0.readRangeContinuousMillimeters();
-  //s1=sensor1.readRangeContinuousMillimeters();
-  //s2=sensor2.readRangeContinuousMillimeters();
-  s0=sensor0.readRangeSingleMillimeters();
-  s1=sensor1.readRangeSingleMillimeters();
-  s2=sensor2.readRangeSingleMillimeters();
+  s0 = rawS0 = sensor0.readRangeContinuousMillimeters();
+  s1 = rawS1 = sensor1.readRangeContinuousMillimeters();
+  s2 = rawS2 = sensor2.readRangeContinuousMillimeters();
+  //s0 = sensor0.readRangeSingleMillimeters();
+  //s1 = sensor1.readRangeSingleMillimeters();
+  //s2 = sensor2.readRangeSingleMillimeters();
 #endif
 //=========================================================
 //  Bluetooth Serial Control

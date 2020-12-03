@@ -1,9 +1,10 @@
 //=========================================================
 //  RumiCar_esp32.h :  RumiCar Library Header for M5.Atom 
 //  History    : V1.0  2020-08-18 New Create(K.Ohe)
+//               V1.1  2020-12-04 change to K989
 //=========================================================
 #define RUMICAR_ESP32_H
-#define SENSOR_VL53L1X
+//#define SENSOR_VL53L1X
 #define VL53L1X_RANGE   VL53L1X::Long       // Short Long Medium
 #define VL53L1X_TB      33000               // Short :20000
 #define VL53L1X_POV_X   10
@@ -14,6 +15,8 @@
 #else
 #include <VL53L0X.h>
 #endif
+#define K989
+
 // RumiCar include
 
 //操舵用の設定
