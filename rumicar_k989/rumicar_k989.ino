@@ -15,7 +15,7 @@ BluetoothSerial SerialBT;
 //=========================================================
 //  RumiCar Default Parameter
 //=========================================================
-#define DEVICE_NAME     "RumiCar_ESP32" // BLE Device Name
+#define DEVICE_NAME     "RumiCar_K989" // BLE Device Name
 #define PILOT_MODE      1         // 1:Auto 2:Manual
 #define MAX_TORQUE      255       // max pwm value
 #define MAX_POWER       200       // 230 max              K989:200
