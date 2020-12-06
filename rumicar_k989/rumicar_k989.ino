@@ -18,7 +18,7 @@ BluetoothSerial SerialBT;
 #define DEVICE_NAME     "RumiCar_ESP32" // BLE Device Name
 #define PILOT_MODE      1         // 1:Auto 2:Manual
 #define MAX_TORQUE      255       // max pwm value
-#define MAX_POWER       180       // 230 max              K989:200
+#define MAX_POWER       200       // 230 max              K989:200
 #define MIN_POWER       150       // 120 min
 #define MAX_SPEED       1.0       // max speed factor
 #define MID_SPEED       0.75      // mid speed factor
@@ -156,7 +156,8 @@ void auto_driving()
       requestTorque = MAX_TORQUE;
     } else {
       curDriveDir = REVERSE;
-      requestTorque = map(s1, STP_DISTANCE_F, MIN_DISTANCE_F, MIN_POWER + dAngle / 2, maxSpeed * LOW_SPEED);
+//      requestTorque = map(s1, STP_DISTANCE_F, MIN_DISTANCE_F, MIN_POWER + dAngle / 2, maxSpeed * LOW_SPEED);
+      requestTorque = MIN_POWER + dAngle / 2; 
     }
   } else {
     reverseMode = 0;
@@ -392,8 +393,15 @@ void manual_pilot()
 {
   int sDrive;         // dirve power
   int angle;          // steering angle
-  int K_OFF = 50;     // min power offset
-                      // driving
+  int K_OFF = 0;      // min power offset
+  unsigned long t;                  // current time
+  char buf[256];      // serial pirnt buffer
+
+  t = millis();                     // get current time
+  dTime = t - preTime;                 // diff time
+  preTime = t;
+  Joy_Y = requestTorque = maxSpeed;
+
   if (Joy_Y > 10) {
     sDrive = constrain( Joy_Y + K_OFF, 0, maxSpeed);
     RC_drive(FORWARD, sDrive);
@@ -401,7 +409,7 @@ void manual_pilot()
     sDrive = constrain(-Joy_Y + K_OFF, 0, maxSpeed);
     RC_drive(REVERSE, sDrive);
   } else {
-    RC_drive(BRAKE, 0);
+    RC_drive(BRAKE, 255);
   }
                       // steering
   angle = constrain(Joy_X + Trim, -100, 100);
@@ -412,6 +420,11 @@ void manual_pilot()
   } else {
     RC_steer(CENTER);
   }
+#ifdef BT_ON
+  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
+                t, rawS0, st0, rawS1, st1, rawS2, st2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
+  SerialBT.println(buf);
+#endif
 }
 
 //=========================================================
@@ -457,11 +470,12 @@ void loop()
       if (autoPilot == 0) {
         autoPilot = 1;
 #ifdef BT_ON
-        SerialBT.println("\tTime\tS0\tst0\tS1\tst1\tS2\tst2\tD\tP\tDIR\tAngle\tKp\tKd\trequestSpeed\tcurSpeed\tcurDriveDIr\tLayout\tdMode");
+        SerialBT.println("\tTime\tS0\tst0\tS1\tst1\tS2\tst2\tD\tP\tDIR\tAngle\tKp\tKd\trequestSpeed\tcurSpeed\tcurDriveDir\tLayout\tdMode");
 //        SerialBT.println("\tTime\tS0\tS1\tS2\tD\tP\tDIR\tAngle\tKp\tKd\trequestSpeed\tcurSpeed\tcurDriveDIr\tLayout\tdMode");
 #endif
       } else {
         autoPilot = 0;
+        maxSpeed = 0;
       }
     } else if (action == 'M') {
       dMode++;
@@ -485,6 +499,8 @@ void loop()
     } else if (action == 'd') {
       kd -= 0.025;
       if (kd <= 0) kd = 0;
+    } else if (action == 'Q' || action == 'q') {
+      maxSpeed = 0;
     }
   }
   if (autoPilot == 1) {
