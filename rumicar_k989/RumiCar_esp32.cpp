@@ -13,8 +13,8 @@
 #endif
 #define SERVO
 // Private Variable for timmer task
-#define   UP_SPEED      (180)       // StartUP speed
-#define   UP_TIME       (3)         // 30[ms]
+#define   UP_SPEED      (220)       // StartUP speed
+#define   UP_TIME       (10)         // 30[ms]
 float timer_interval = 0.01;  //seconds
 Ticker Timer1;
 
