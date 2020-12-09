@@ -161,21 +161,21 @@ void auto_driving()
     }
   } else {
     reverseMode = 0;
-    if (s1 > OVR_DISTANCE_F) {                // 800 < x
+    if (s1 > OVR_DISTANCE_F) {                // 500 < x
       curDriveDir = FORWARD;
       requestTorque = maxSpeed * MAX_SPEED;   // full throttle
-    } else {                                  // 100 < x < 800
+    } else {                                  // 100 < x < 500
       curDriveDir = FORWARD;
       targetSpeed   = map(s1, MIN_DISTANCE_F, OVR_DISTANCE_F, 0, maxSpeed * MAX_SPEED);
       requestTorque = map(s1, MIN_DISTANCE_F, OVR_DISTANCE_F, MIN_POWER + dAngle / 2, maxSpeed * MAX_SPEED);
       if (targetSpeed <= curSpeed) {           // over speed
-        if (brake_flag == 1) {                 // if two times then brake!
+//        brake_flag++;
+//        if (brake_flag > 1) {                 // if two times then brake!
           curDriveDir   = BRAKE;
           requestTorque = MAX_TORQUE;
-          brake_flag = 1;
-        } else {
-          brake_flag = 0;
-        }
+//        } else {
+//          brake_flag = 0;
+//        }
       }
     }
   }
