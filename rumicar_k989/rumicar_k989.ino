@@ -120,7 +120,6 @@ void auto_driving()
 {
   int dDistance      = 0;
   int minDistance    = 0;
-  int brake_flag     = 0;
 
   //=========================================================
   //  calc distance to wall & current speed
@@ -169,13 +168,8 @@ void auto_driving()
       targetSpeed   = map(s1, MIN_DISTANCE_F, OVR_DISTANCE_F, 0, maxSpeed * MAX_SPEED);
       requestTorque = map(s1, MIN_DISTANCE_F, OVR_DISTANCE_F, MIN_POWER + dAngle / 2, maxSpeed * MAX_SPEED);
       if (targetSpeed <= curSpeed) {           // over speed
-//        brake_flag++;
-//        if (brake_flag > 1) {                 // if two times then brake!
           curDriveDir   = BRAKE;
           requestTorque = MAX_TORQUE;
-//        } else {
-//          brake_flag = 0;
-//        }
       }
     }
   }
