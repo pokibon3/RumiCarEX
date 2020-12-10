@@ -80,7 +80,7 @@ static int16_t Joy_X = 0;                // JoyStick X
 static int16_t Joy_Y = 0;                // JoyStick Y
 static int16_t autoPilot = PILOT_MODE;   // Default Pilot Mode
 static int16_t Trim = 0;                 // Default Trimmer value
-static int16_t maxSpeed = MAX_POWER;     // Default Max Motor Power
+static int16_t maxSpeed  = MAX_POWER;    // Default Max Motor Power
 static unsigned long sFwdTime = 0;       // fwd passage time
 static unsigned long eFwdTime = 0;       // fwd passage time
 static unsigned long sCornerTime = 0;    // cornering passage time
@@ -463,6 +463,7 @@ void loop()
     if (action == 'a' ){
       if (autoPilot == 0) {
         autoPilot = 1;
+        maxSpeed = MAX_POWER;
 #ifdef BT_ON
         SerialBT.println("\tTime\tS0\tst0\tS1\tst1\tS2\tst2\tD\tP\tDIR\tAngle\tKp\tKd\trequestSpeed\tcurSpeed\tcurDriveDir\tLayout\tdMode");
 //        SerialBT.println("\tTime\tS0\tS1\tS2\tD\tP\tDIR\tAngle\tKp\tKd\trequestSpeed\tcurSpeed\tcurDriveDIr\tLayout\tdMode");
@@ -493,7 +494,8 @@ void loop()
     } else if (action == 'd') {
       kd -= 0.025;
       if (kd <= 0) kd = 0;
-    } else if (action == 'Q' || action == 'q') {
+    } else if (action == 'Q' || action == 'q' || action == ' ') {
+      autoPilot = 0;
       maxSpeed = 0;
     }
   }
