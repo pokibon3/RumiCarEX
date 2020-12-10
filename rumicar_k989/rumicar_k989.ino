@@ -255,16 +255,16 @@ void auto_steering()
 ///*
   Serial.print("\tSensor0:");
   Serial.print(rawS0);
-  Serial.print("\tStatus:");
-  Serial.print(st0);
+//  Serial.print("\tStatus:");
+//  Serial.print(st0);
   Serial.print("\tSensor1:");
   Serial.print(rawS1);
-  Serial.print("\tStatus:");
-  Serial.print(st1);
+//  Serial.print("\tStatus:");
+//  Serial.print(st1);
   Serial.print("\tSensor2:");
   Serial.print(rawS2);
-  Serial.print("\tStatus:");
-  Serial.print(st2);
+//  Serial.print("\tStatus:");
+//  Serial.print(st2);
   Serial.print("\tcourseLayout:");
   Serial.print(courseLayout);
   Serial.print("\tTargetPos:");
@@ -303,14 +303,6 @@ void auto_steering()
   //  kerikaeshi
   //=========================================================
   if (reverseMode == 1) {
-//    if (steerDir == RIGHT) {
-//      steerDir = LEFT;                  // counter steer
-//    } else if (steerDir == LEFT) {
-//      steerDir = RIGHT;                 // counter steer
-//    } else {                            // kirikaeshi
-//      steerDir = CENTER;
-//      dAngle = steerMax * 0.7;
-//    }
     dAngle = steerMax * 0.7;            // kirikaeshi
     if (steerDir == RIGHT) {
       steerDir = LEFT;                  // counter steer
@@ -415,8 +407,10 @@ void manual_pilot()
     RC_steer(CENTER);
   }
 #ifdef BT_ON
-  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
-                t, rawS0, st0, rawS1, st1, rawS2, st2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
+//  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
+//                t, rawS0, st0, rawS1, st1, rawS2, st2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
+  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
+                t, rawS0, rawS1, rawS2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
   SerialBT.println(buf);
 #endif
 }
@@ -449,8 +443,11 @@ void loop()
 
 #else
   s0 = rawS0 = sensor0.readRangeContinuousMillimeters();
+  if (sensor0.timeoutOccurred()) maxSpeed = 0;        // sonsor0 error ! emergency stop
   s1 = rawS1 = sensor1.readRangeContinuousMillimeters();
+  if (sensor1.timeoutOccurred()) maxSpeed = 0;        // sensor1 error ! emergency stop
   s2 = rawS2 = sensor2.readRangeContinuousMillimeters();
+  if (sensor1.timeoutOccurred()) maxSpeed = 0;        // sensor2 error ! emergency stop
   //s0 = sensor0.readRangeSingleMillimeters();
   //s1 = sensor1.readRangeSingleMillimeters();
   //s2 = sensor2.readRangeSingleMillimeters();
@@ -465,7 +462,8 @@ void loop()
         autoPilot = 1;
         maxSpeed = MAX_POWER;
 #ifdef BT_ON
-        SerialBT.println("\tTime\tS0\tst0\tS1\tst1\tS2\tst2\tD\tP\tDIR\tAngle\tKp\tKd\trequestSpeed\tcurSpeed\tcurDriveDir\tLayout\tdMode");
+        SerialBT.println("\tTime\tS0\tS1\tS2\tD\tP\tDIR\tAngle\tKp\tKd\trequestTorque\tcurSpeed\tcurDriveDir\tLayout\tdMode");
+//        SerialBT.println("\tTime\tS0\tst0\tS1\tst1\tS2\tst2\tD\tP\tDIR\tAngle\tKp\tKd\trequestTorque\tcurSpeed\tcurDriveDir\tLayout\tdMode");
 //        SerialBT.println("\tTime\tS0\tS1\tS2\tD\tP\tDIR\tAngle\tKp\tKd\trequestSpeed\tcurSpeed\tcurDriveDIr\tLayout\tdMode");
 #endif
       } else {

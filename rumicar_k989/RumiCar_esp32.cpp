@@ -117,6 +117,19 @@ void RC_setup()
   sensor1.startContinuous(5);
   sensor2.startContinuous(5);
 #else
+//#if defined LONG_RANGE
+  // lower the return signal rate limit (default is 0.25 MCPS)
+  sensor0.setSignalRateLimit(0.1);
+  sensor1.setSignalRateLimit(0.1);
+  sensor2.setSignalRateLimit(0.1);
+  // increase laser pulse periods (defaults are 14 and 10 PCLKs)
+  sensor0.setVcselPulsePeriod(VL53L0X::VcselPeriodPreRange, 18);
+  sensor1.setVcselPulsePeriod(VL53L0X::VcselPeriodPreRange, 18);
+  sensor2.setVcselPulsePeriod(VL53L0X::VcselPeriodPreRange, 18);
+  sensor0.setVcselPulsePeriod(VL53L0X::VcselPeriodFinalRange, 14);
+  sensor1.setVcselPulsePeriod(VL53L0X::VcselPeriodFinalRange, 14);
+  sensor2.setVcselPulsePeriod(VL53L0X::VcselPeriodFinalRange, 14);
+//#endif
   sensor0.setMeasurementTimingBudget(20000);
   sensor1.setMeasurementTimingBudget(20000);
   sensor2.setMeasurementTimingBudget(20000);
