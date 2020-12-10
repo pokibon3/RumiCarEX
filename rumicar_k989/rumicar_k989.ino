@@ -252,7 +252,7 @@ void auto_steering()
   } else if (targetPos - targetPos2 < 10) {
     targetPos = constrain(targetPos + oioCount * 2, targetPos, targetPos2) ;
   }
-///*
+/*
   Serial.print("\tSensor0:");
   Serial.print(rawS0);
 //  Serial.print("\tStatus:");
@@ -274,7 +274,7 @@ void auto_steering()
   Serial.print("\toioCount:");
   Serial.print(oioCount);
   Serial.println();
-//*/
+*/
   //=========================================================
   //  calc steering angle
   //=========================================================
