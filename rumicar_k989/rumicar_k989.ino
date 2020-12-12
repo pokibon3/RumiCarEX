@@ -170,7 +170,8 @@ void auto_driving()
     } else {                                  // 100 < x < 500
       curDriveDir = FORWARD;
       targetSpeed   = map(s1, MIN_DISTANCE_F, OVR_DISTANCE_F, 0, maxSpeed * MAX_SPEED);
-      requestTorque = map(s1, MIN_DISTANCE_F, OVR_DISTANCE_F, MIN_POWER + dAngle / 2, maxSpeed * MAX_SPEED);
+      requestTorque = map(s1, MIN_DISTANCE_F, OVR_DISTANCE_F, MIN_POWER, maxSpeed * MAX_SPEED);
+//      requestTorque = map(s1, MIN_DISTANCE_F, OVR_DISTANCE_F, MIN_POWER + dAngle / 2, maxSpeed * MAX_SPEED);
       if (targetSpeed <= curSpeed) {           // over speed
           curDriveDir   = BRAKE;
           requestTorque = MAX_TORQUE;
