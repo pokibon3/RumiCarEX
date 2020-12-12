@@ -19,14 +19,14 @@ BluetoothSerial SerialBT;
 #define PILOT_MODE      1         // 1:Auto 2:Manual
 #define MAX_TORQUE      255       // max pwm value
 #define MAX_POWER       200       // 230 max              K989:200
-#define MIN_POWER       150       // 120 min
+#define MIN_POWER       100       // 120 min
 #define MAX_SPEED       1.0       // max speed factor
 #define MID_SPEED       0.75      // mid speed factor
 #define LOW_SPEED       0.5       // low speed need torque
 #define BRAKE_TIME      1000      // coasting max time
 #define MAX_DISTANCE_W  300       // max distance to wall
 #define MID_DISTANCE_W  150       // keep distance from inside wall
-#define MIN_DISTANCE_W  50        // min distance to wall
+#define MIN_DISTANCE_W  0         // min distance to wall
 #define MAX_ANGLE       100       // max 100%
 #define KIRIKAESHI_ANGLE 85       // kirikaeshi reverse angle
 #define LIMIT_ANGLE      30       // max  30%
@@ -414,11 +414,13 @@ void manual_pilot()
     RC_steer(CENTER);
   }
 #ifdef BT_ON
+  if (maxSpeed != 0) {
 //  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
 //                t, rawS0, st0, rawS1, st1, rawS2, st2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
-//  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
-//                t, rawS0, rawS1, rawS2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
-//  SerialBT.println(buf);
+    sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
+                  t, rawS0, rawS1, rawS2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
+    SerialBT.println(buf);
+  }
 #endif
 }
 

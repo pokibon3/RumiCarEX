@@ -12,9 +12,10 @@
 #include "RumiCar_esp32.h"
 #endif
 #define SERVO
+#define LED_BUILTIN  2
 // Private Variable for timmer task
-#define   UP_SPEED      (220)       // StartUP speed
-#define   UP_TIME       (10)         // 30[ms]
+#define   UP_SPEED      (150)       // StartUP speed
+#define   UP_TIME       (30)         // 30[ms]
 float timer_interval = 0.01;  //seconds
 Ticker Timer1;
 
@@ -23,6 +24,9 @@ volatile  int s_gear = FREE;
 volatile  int s_steer = CENTER;
 volatile  int s_steera = 255;
 volatile  int s_sptim = 0;
+volatile  int s_count = 0;
+volatile  int blinkPeriod = 200; 
+volatile  int ledState = HIGH;
 
 //=========================================================
 //  Variable definition
@@ -67,6 +71,9 @@ void RC_setup()
   pinMode(AIN2, OUTPUT);
   pinMode(BIN1, OUTPUT);
   pinMode(BIN2, OUTPUT);
+
+  pinMode(LED_BUILTIN, OUTPUT);
+  //digitalWrite(LED_BUILTIN, HIGH);
 
   pinMode(SHUT0, OUTPUT);
   pinMode(SHUT1, OUTPUT);
@@ -143,8 +150,8 @@ void RC_setup()
   //モータのPWMのチャンネル、周波数の設定
   ledcSetup(0, 490, PWM_level);
   ledcSetup(1, 490, PWM_level);
-  ledcSetup(2, 240, PWM_level);  // 960
-  ledcSetup(3, 240, PWM_level);  // 960
+  ledcSetup(2, 8000, PWM_level);  // 240
+  ledcSetup(3, 8000, PWM_level);  // 240
   ledcAttachPin(AIN1, 0);
   ledcAttachPin(AIN2, 1);
   ledcAttachPin(BIN1, 2);
@@ -266,4 +273,11 @@ void RC_run(void)
   if(s_sptim != 0){
     s_sptim --;
   }
+  // blink LED
+  s_count++;
+  if (s_count * 10 > blinkPeriod / 2) {
+    ledState = ! ledState;
+    s_count = 0;
+  }
+  digitalWrite(LED_BUILTIN, ledState);
 }
