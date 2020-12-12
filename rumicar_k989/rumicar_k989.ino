@@ -28,6 +28,7 @@ BluetoothSerial SerialBT;
 #define MID_DISTANCE_W  150       // keep distance from inside wall
 #define MIN_DISTANCE_W  50        // min distance to wall
 #define MAX_ANGLE       100       // max 100%
+#define KIRIKAESHI_ANGLE 85       // kirikaeshi reverse angle
 #define LIMIT_ANGLE      30       // max  30%
 #define OVR_DISTANCE_F  500       // 800mm  detect straight  500:K989
 #define MAX_DISTANCE_F  300       // 300mm  detect front wall
@@ -39,7 +40,7 @@ BluetoothSerial SerialBT;
 #define OIO_OFFSET      50        // out in out offset 0=off
 #define OIO_TIME        500       // continue 500ms to inside
 #define MAX_STOP_TIME   4         // stop time(for reverse mode)
-#define KP_CONST        0.8       // Konstante p
+#define KP_CONST        1.0       // Konstante p
 #define KD_CONST        0.1       // Konstante d
 #define DMODE           0         // Differential control mode
                                   // 1: normalize 0:active
@@ -52,6 +53,9 @@ VL53L0X sensor0;                  // create right sensor instance
 VL53L0X sensor1;                  // create front sensor instance
 VL53L0X sensor2;                  // create left  sensor instance
 #endif
+
+#define BODY_CLEARANCE_F  40      // offset of front sensor
+#define BODY_CLEARANCE_W  30      // offset of side sensor
 
 //=========================================================
 //  auto pilot variables difinition
@@ -303,7 +307,7 @@ void auto_steering()
   //  kerikaeshi
   //=========================================================
   if (reverseMode == 1) {
-    dAngle = steerMax * 0.7;            // kirikaeshi
+    dAngle = KIRIKAESHI_ANGLE;          // kirikaeshi
     if (steerDir == RIGHT) {
       steerDir = LEFT;                  // counter steer
     } else  {
