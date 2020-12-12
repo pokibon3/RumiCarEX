@@ -367,11 +367,13 @@ void auto_pilot()
   //  Logging
   //=========================================================
 #ifdef BT_ON
-  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
-                t, rawS0, st0, rawS1, st1, rawS2, st2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
+//  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
+//                t, rawS0, st0, rawS1, st1, rawS2, st2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
 //  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
 //                t, rawS0, rawS1, rawS2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
-  SerialBT.println(buf);
+  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
+                t, s0, s1, s2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
+    SerialBT.println(buf);
 #endif
 //  SerialBT.println(buf);
 }
@@ -413,9 +415,9 @@ void manual_pilot()
 #ifdef BT_ON
 //  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
 //                t, rawS0, st0, rawS1, st1, rawS2, st2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
-  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
-                t, rawS0, rawS1, rawS2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
-  SerialBT.println(buf);
+//  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
+//                t, rawS0, rawS1, rawS2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
+//  SerialBT.println(buf);
 #endif
 }
 
@@ -448,10 +450,13 @@ void loop()
 #else
   s0 = rawS0 = sensor0.readRangeContinuousMillimeters();
   if (sensor0.timeoutOccurred()) maxSpeed = 0;        // sonsor0 error ! emergency stop
+  s0 = constrain(s0 - BODY_CLEARANCE_W, 0,  MAX_DISTANCE_W);
   s1 = rawS1 = sensor1.readRangeContinuousMillimeters();
   if (sensor1.timeoutOccurred()) maxSpeed = 0;        // sensor1 error ! emergency stop
+  s1 = s1 - BODY_CLEARANCE_F;
   s2 = rawS2 = sensor2.readRangeContinuousMillimeters();
   if (sensor1.timeoutOccurred()) maxSpeed = 0;        // sensor2 error ! emergency stop
+  s2 = constrain(s2 - BODY_CLEARANCE_W, 0,  MAX_DISTANCE_W);
   //s0 = sensor0.readRangeSingleMillimeters();
   //s1 = sensor1.readRangeSingleMillimeters();
   //s2 = sensor2.readRangeSingleMillimeters();
