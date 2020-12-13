@@ -28,13 +28,13 @@ BluetoothSerial SerialBT;
 #define MID_DISTANCE_W  150       // keep distance from inside wall
 #define MIN_DISTANCE_W  0         // min distance to wall
 #define MAX_ANGLE       100       // max 100%
-#define KIRIKAESHI_ANGLE 85       // kirikaeshi reverse angle
+#define KIRIKAESHI_ANGLE 95       // kirikaeshi reverse angle
 #define LIMIT_ANGLE      30       // max  30%
 #define OVR_DISTANCE_F  500       // 800mm  detect straight  500:K989
 #define MAX_DISTANCE_F  300       // 300mm  detect front wall
 #define MID_DISTANCE_F  200       // 200mm  speed down distance
 #define MIN_DISTANCE_F  100       // 100mm  reverse start distance
-#define REVERSE_DISTANCE 100      // 100mm  reverse distance
+#define REVERSE_DISTANCE 150      // 100mm  reverse distance
 #define STP_DISTANCE_F  0         // 0mm kiss to wall
 #define REVERSE_TIME    200       // reverse time 500ms
 #define OIO_OFFSET      50        // out in out offset 0=off

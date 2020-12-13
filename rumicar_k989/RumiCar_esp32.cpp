@@ -14,8 +14,8 @@
 #define SERVO
 #define LED_BUILTIN  2
 // Private Variable for timmer task
-#define   UP_SPEED      (150)       // StartUP speed
-#define   UP_TIME       (30)         // 30[ms]
+#define   UP_SPEED      (160)       // StartUP speed
+#define   UP_TIME       (100)         // 30[ms]
 float timer_interval = 0.01;  //seconds
 Ticker Timer1;
 
@@ -25,7 +25,7 @@ volatile  int s_steer = CENTER;
 volatile  int s_steera = 255;
 volatile  int s_sptim = 0;
 volatile  int s_count = 0;
-volatile  int blinkPeriod = 200; 
+volatile  int blinkPeriod = 100; 
 volatile  int ledState = HIGH;
 
 //=========================================================
