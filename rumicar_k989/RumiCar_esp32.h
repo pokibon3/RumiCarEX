@@ -44,6 +44,7 @@ EXTERN int  RC_steer(int  direc, int angle = 50);
 EXTERN int  RC_drive(int, int);
 EXTERN void RC_delay(unsigned long tim);
 EXTERN void RC_run(void);
+EXTERN void RC_halt(void);
 
 // TOF Sensor definition
 #ifdef SENSOR_VL53L1X

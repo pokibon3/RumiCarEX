@@ -2,11 +2,14 @@
 //  rumicar_esp32.ino :  RumiCar application
 //  History     : V1.0  2020-08-18 new create
 //                V2.0  2020-12-04 Support K989
+//                V2.1  2020-12-13 Add Battery Check
 //=========================================================
 #include <Wire.h>
 #define  EXTERN extern
 #include "RumiCar_esp32.h"
 #include "BluetoothSerial.h"
+#include "driver/adc.h" 
+#include "esp_adc_cal.h"
 
 #define BT_ON
 #ifdef BT_ON
@@ -57,6 +60,7 @@ VL53L0X sensor2;                  // create left  sensor instance
 #define BODY_CLEARANCE_F  40      // offset of front sensor
 #define BODY_CLEARANCE_W  30      // offset of side sensor
 
+esp_adc_cal_characteristics_t adcChar;
 //=========================================================
 //  auto pilot variables difinition
 //=========================================================
@@ -100,6 +104,8 @@ static int steerDir;                     // steering direction
 static int dAngle;                       // steering angle
 static int oioCount       = 0;           // oio count
 static int cornerFlag     = 0;           // oio mode flag
+static uint32_t voltage   = 0;           // Battery voltage
+static int BatCheckCount  = 0;
 //=========================================================
 //  Arduino setup function
 //=========================================================
@@ -115,6 +121,18 @@ void setup()
   SerialBT.begin(DEVICE_NAME);
   Serial.println("The device started, now you can pair it with bluetooth!");
 #endif
+// adc setup
+  // ADCを起動（ほかの部分で明示的にOFFにしてなければなくても大丈夫）
+  adc_power_on();
+  // ADC1_CH5を初期化
+  adc_gpio_init(ADC_UNIT_1, ADC_CHANNEL_5);
+  // ADC1の解像度を12bit（0~4095）に設定
+  adc1_config_width(ADC_WIDTH_BIT_12);
+  // ADC1の減衰を11dBに設定
+  adc1_config_channel_atten(ADC1_CHANNEL_5, ADC_ATTEN_DB_11);
+  // 電圧値に変換するための情報をaddCharに格納
+  esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adcChar);
+
 }
 
 //=========================================================
@@ -372,8 +390,8 @@ void auto_pilot()
 //                t, rawS0, st0, rawS1, st1, rawS2, st2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
 //  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
 //                t, rawS0, rawS1, rawS2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
-  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
-                t, s0, s1, s2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
+  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d\t%04d",
+                t, s0, s1, s2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode, voltage);
     SerialBT.println(buf);
 #endif
 //  SerialBT.println(buf);
@@ -417,8 +435,8 @@ void manual_pilot()
   if (maxSpeed != 0) {
 //  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
 //                t, rawS0, st0, rawS1, st1, rawS2, st2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
-    sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
-                  t, rawS0, rawS1, rawS2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
+    sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d\t%04d",
+                  t, rawS0, rawS1, rawS2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode, voltage);
     SerialBT.println(buf);
   }
 #endif
@@ -474,7 +492,7 @@ void loop()
         autoPilot = 1;
         maxSpeed = MAX_POWER;
 #ifdef BT_ON
-        SerialBT.println("\tTime\tS0\tS1\tS2\tD\tP\tDIR\tAngle\tKp\tKd\trequestTorque\tcurSpeed\tcurDriveDir\tLayout\tdMode");
+        SerialBT.println("\tTime\tS0\tS1\tS2\tD\tP\tDIR\tAngle\tKp\tKd\trequestTorque\tcurSpeed\tcurDriveDir\tLayout\tdMode/tBattery");
 //        SerialBT.println("\tTime\tS0\tst0\tS1\tst1\tS2\tst2\tD\tP\tDIR\tAngle\tKp\tKd\trequestTorque\tcurSpeed\tcurDriveDir\tLayout\tdMode");
 //        SerialBT.println("\tTime\tS0\tS1\tS2\tD\tP\tDIR\tAngle\tKp\tKd\trequestSpeed\tcurSpeed\tcurDriveDIr\tLayout\tdMode");
 #endif
@@ -509,9 +527,29 @@ void loop()
       maxSpeed = 0;
     }
   }
+//=========================================================
+//  Battery Check
+//=========================================================
+  BatCheckCount++;
+  if (BatCheckCount >= 20) {
+    BatCheckCount = 0;
+    esp_adc_cal_get_voltage(ADC_CHANNEL_5, &adcChar, &voltage);
+    voltage = voltage / 0.252;        // default : 0.244
+    if (voltage < 6000) {
+      RC_halt();
+      Serial.print("Battery Voltage = ");
+      Serial.print(voltage);
+      Serial.println(" System Halt !");
+      while(true);                // system halt
+    }
+  }
+//=========================================================
+//   Start Driving!
+//=========================================================
   if (autoPilot == 1) {
     auto_pilot();
   } else {
     manual_pilot();
   }
+
 }

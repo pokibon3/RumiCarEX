@@ -25,7 +25,7 @@ volatile  int s_steer = CENTER;
 volatile  int s_steera = 255;
 volatile  int s_sptim = 0;
 volatile  int s_count = 0;
-volatile  int blinkPeriod = 100; 
+volatile  int blinkPeriod = 1000; 
 volatile  int ledState = HIGH;
 
 //=========================================================
@@ -280,4 +280,16 @@ void RC_run(void)
     s_count = 0;
   }
   digitalWrite(LED_BUILTIN, ledState);
+}
+
+//=========================================================
+//  RC_drive    :  drive control function
+//    direc     :  derection
+//    ipwm      :  0 - 255
+//=========================================================
+void RC_halt(void)
+{
+  blinkPeriod = 100;
+  RC_analogWrite(BIN1, 255);
+  RC_analogWrite(BIN2, 255);
 }
