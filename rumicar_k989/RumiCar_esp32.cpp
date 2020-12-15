@@ -27,6 +27,7 @@ volatile  int s_sptim = 0;
 volatile  int s_count = 0;
 volatile  int blinkPeriod = 1000; 
 volatile  int ledState = HIGH;
+volatile  int halt = 0;
 
 //=========================================================
 //  Variable definition
@@ -183,6 +184,8 @@ int RC_steer (int direc, int angle )
   if (angle < 0) angle = 0;
   else if (angle > 100) angle = 100;
 
+  if (halt == 1) return 0;
+
   if ( direc == RIGHT ){
 #ifndef SERVO
     RC_analogWrite(AIN1,255); // 255
@@ -222,6 +225,8 @@ int RC_steer (int direc, int angle )
 //    ipwm      :  0 - 255
 //=========================================================
 int RC_drive(int direc, int ipwm){
+
+  if (halt == 1) return 0;
   //-- StartUP check
   if((s_speed == 0) ||
     (s_gear == FREE) ||
@@ -246,6 +251,16 @@ int RC_drive(int direc, int ipwm){
 //=========================================================
 void RC_run(void)
 {
+  // blink LED
+  s_count++;
+  if (s_count * 10 > blinkPeriod / 2) {
+    ledState = ! ledState;
+    s_count = 0;
+  }
+  digitalWrite(LED_BUILTIN, ledState);
+
+  if (halt == 1) return;
+
   if ( s_gear == FREE ){
     RC_analogWrite(BIN1,0);
     RC_analogWrite(BIN2,0);
@@ -273,13 +288,6 @@ void RC_run(void)
   if(s_sptim != 0){
     s_sptim --;
   }
-  // blink LED
-  s_count++;
-  if (s_count * 10 > blinkPeriod / 2) {
-    ledState = ! ledState;
-    s_count = 0;
-  }
-  digitalWrite(LED_BUILTIN, ledState);
 }
 
 //=========================================================
@@ -289,7 +297,13 @@ void RC_run(void)
 //=========================================================
 void RC_halt(void)
 {
+  halt = 1;
   blinkPeriod = 100;
-  RC_analogWrite(BIN1, 255);
-  RC_analogWrite(BIN2, 255);
+  RC_analogWrite(BIN1, 0);
+  RC_analogWrite(BIN2, 0);
+#ifndef VL53L1X
+  sensor0.stopContinuous();
+  sensor1.stopContinuous();
+  sensor2.stopContinuous();
+#endif
 }

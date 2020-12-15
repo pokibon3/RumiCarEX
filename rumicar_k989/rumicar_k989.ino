@@ -535,7 +535,7 @@ void loop()
     BatCheckCount = 0;
     esp_adc_cal_get_voltage(ADC_CHANNEL_5, &adcChar, &voltage);
     voltage = voltage / 0.252;        // default : 0.244
-    if (voltage < 6000) {
+    if (voltage < 6000 && voltage > 1000) {
       RC_halt();
       Serial.print("Battery Voltage = ");
       Serial.print(voltage);
