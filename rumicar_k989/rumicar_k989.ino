@@ -3,6 +3,7 @@
 //  History     : V1.0  2020-08-18 new create
 //                V2.0  2020-12-04 Support K989
 //                V2.1  2020-12-13 Add Battery Check
+//                V2.2  2020-12-15 Add Semi AutoDrive
 //=========================================================
 #include <Wire.h>
 #define  EXTERN extern
@@ -196,6 +197,10 @@ void auto_driving()
       }
     }
   }
+  if (autoPilot == 2) {
+    requestTorque = maxSpeed;
+    curDriveDir = FORWARD;
+  } 
   RC_drive(curDriveDir, requestTorque);
   //=========================================================
   //  calc forward time
@@ -391,7 +396,7 @@ void auto_pilot()
 //  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
 //                t, rawS0, rawS1, rawS2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
   sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d\t%04d",
-                t, s0, s1, s2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode, voltage);
+                t, rawS0, rawS1, rawS2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode, voltage);
     SerialBT.println(buf);
 #endif
 //  SerialBT.println(buf);
@@ -500,6 +505,9 @@ void loop()
         autoPilot = 0;
         maxSpeed = 0;
       }
+    } else if (action == 'A') {
+      autoPilot = 2;
+      maxSpeed = 0;
     } else if (action == 'M') {
       dMode++;
       if (dMode > 4) dMode = 4;
@@ -512,6 +520,12 @@ void loop()
     } else if (action == 's') {
       maxSpeed -= 10;
       if (maxSpeed <= 100) maxSpeed = 100;
+    } else if (action == '.' || action == '>') {
+      Joy_X += 10;
+      if (Joy_X >= 100) Joy_X = 100;
+    } else if (action == ',' || action == '<') {
+      Joy_X -= 10;
+      if (Joy_X <= -100) Joy_X = -100;
     } else if (action == 'P') {
       kp += 0.025;
     } else if (action == 'p') {
@@ -546,10 +560,9 @@ void loop()
 //=========================================================
 //   Start Driving!
 //=========================================================
-  if (autoPilot == 1) {
+  if (autoPilot == 1 || autoPilot == 2) {
     auto_pilot();
   } else {
     manual_pilot();
   }
-
 }
