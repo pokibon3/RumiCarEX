@@ -23,7 +23,7 @@ BluetoothSerial SerialBT;
 #define PILOT_MODE      1         // 1:Auto 2:Manual
 #define MAX_TORQUE      255       // max pwm value
 #define MAX_POWER       200       // 230 max              K989:200
-#define MIN_POWER       100       // 120 min
+#define MIN_POWER       140       // 120 min
 #define MAX_SPEED       1.0       // max speed factor
 #define MID_SPEED       0.75      // mid speed factor
 #define LOW_SPEED       0.5       // low speed need torque
@@ -179,7 +179,8 @@ void auto_driving()
     } else {
       curDriveDir = REVERSE;
 //      requestTorque = map(s1, STP_DISTANCE_F, MIN_DISTANCE_F, MIN_POWER + dAngle / 2, maxSpeed * LOW_SPEED);
-      requestTorque = MIN_POWER + dAngle / 2; 
+//      requestTorque = MIN_POWER + dAngle / 2; 
+      requestTorque = MIN_POWER; 
     }
   } else {
     reverseMode = 0;
@@ -437,7 +438,7 @@ void manual_pilot()
     RC_steer(CENTER);
   }
 #ifdef BT_ON
-  if (maxSpeed != 0) {
+  if (maxSpeed > MIN_POWER) {
 //  sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d",
 //                t, rawS0, st0, rawS1, st1, rawS2, st2, p, d, steerDir, dAngle, kp, kd, requestTorque, curSpeed, curDriveDir, courseLayout, dMode);
     sprintf(buf, "\t%8d\t%4d\t%4d\t%4d\t%5.2f\t%5.2f\t%1d\t%3d\t%5.3f\t%5.3f\t%3d\t%3d\t%1d\t%1d\t%1d\t%04d",
@@ -503,7 +504,7 @@ void loop()
 #endif
       } else {
         autoPilot = 0;
-        maxSpeed = 0;
+        maxSpeed = MIN_POWER;
       }
     } else if (action == 'A') {
       autoPilot = 2;
@@ -521,10 +522,10 @@ void loop()
       maxSpeed -= 10;
       if (maxSpeed <= 100) maxSpeed = 100;
     } else if (action == '.' || action == '>') {
-      Joy_X += 10;
+      Joy_X += 20;
       if (Joy_X >= 100) Joy_X = 100;
     } else if (action == ',' || action == '<') {
-      Joy_X -= 10;
+      Joy_X -= 20;
       if (Joy_X <= -100) Joy_X = -100;
     } else if (action == 'P') {
       kp += 0.025;
@@ -549,7 +550,7 @@ void loop()
     BatCheckCount = 0;
     esp_adc_cal_get_voltage(ADC_CHANNEL_5, &adcChar, &voltage);
     voltage = voltage / 0.252;        // default : 0.244
-    if (voltage < 6000 && voltage > 1000) {
+    if (voltage < 5800 && voltage > 1000) {
       RC_halt();
       Serial.print("Battery Voltage = ");
       Serial.print(voltage);

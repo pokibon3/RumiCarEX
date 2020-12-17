@@ -46,8 +46,8 @@ Servo Steer_servo;  // create servo object to control a servo
 #define SERVO_LEFT   60        // max 60
 #define SERVO_RIGHT 130        // max 120
 #else               // for K989 Servo setting
-#define SERVO_LEFT  135        // max 160
-#define SERVO_RIGHT  45         // max 20
+#define SERVO_LEFT  145        // max 160
+#define SERVO_RIGHT  35         // max 20
 #endif
 //=========================================================
 // RC_delay:PWM 周波数変更しているためTimer0を調整
