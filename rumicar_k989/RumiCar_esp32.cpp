@@ -2,8 +2,10 @@
 //  RumiCar_esp32.cpp :  RumiCar Library for M5.Atom
 //  History     : V1.0  2020-08-18 New Create(K.Ohe)
 //                V2.0  2020-12-04 Support K989
+//                V2.1  2021-01-02 Support PCA9536 i2c expander
 //=========================================================
 #include <Wire.h>
+#include <SparkFun_PCA9536_Arduino_Library.h>
 #include <ESP32Servo.h>
 //#include "ESP32TimerInterrupt.h"
 #include <Ticker.h>
@@ -49,6 +51,7 @@ Servo Steer_servo;  // create servo object to control a servo
 #define SERVO_LEFT  145        // max 160
 #define SERVO_RIGHT  35         // max 20
 #endif
+PCA9536 pca9536;  
 //=========================================================
 // RC_delay:PWM 周波数変更しているためTimer0を調整
 //=========================================================
@@ -86,7 +89,23 @@ void RC_setup()
   delay(150);
   Wire.begin(21, 22);
 
+  // Initialize the PCA9536 with a begin function
+  if (pca9536.begin() == false)
+  {
+    Serial.println("PCA9536 not detected. Please check wiring. Freezing...");
+    while (1)
+      ;
+  } 
+  pca9536.pinMode(0, OUTPUT);
+  pca9536.pinMode(1, OUTPUT);
+  pca9536.pinMode(2, OUTPUT);
+  pca9536.pinMode(3, INPUT);
+  pca9536.digitalWrite(0, LOW);
+  pca9536.digitalWrite(1, LOW);
+  pca9536.digitalWrite(2, LOW);
+
   pinMode(SHUT0, INPUT);
+  pca9536.pinMode(2, INPUT);
   delay(150);
   sensor0.init(true);
   delay(100);
@@ -94,6 +113,7 @@ void RC_setup()
   sensor0.setTimeout(500);      // 500
   //seonsor1
   pinMode(SHUT1, INPUT);
+  pca9536.pinMode(1, INPUT);
   delay(150);
   sensor1.init(true);
   delay(100);
@@ -101,6 +121,7 @@ void RC_setup()
   sensor1.setTimeout(500);
   //seonsor2
   pinMode(SHUT2, INPUT);
+  pca9536.pinMode(0, INPUT);
   delay(150);
   sensor2.init(true);
   delay(100);

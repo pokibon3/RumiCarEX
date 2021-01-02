@@ -23,7 +23,7 @@ BluetoothSerial SerialBT;
 #define PILOT_MODE      1         // 1:Auto 2:Manual
 #define MAX_TORQUE      255       // max pwm value
 #define MAX_POWER       200       // 230 max              K989:200
-#define MIN_POWER       140       // 120 min
+#define MIN_POWER       150       // 120 min
 #define MAX_SPEED       1.0       // max speed factor
 #define MID_SPEED       0.75      // mid speed factor
 #define LOW_SPEED       0.5       // low speed need torque
@@ -106,6 +106,7 @@ static int dAngle;                       // steering angle
 static int oioCount       = 0;           // oio count
 static int cornerFlag     = 0;           // oio mode flag
 static uint32_t voltage   = 0;           // Battery voltage
+static uint32_t pVoltage  = 7200;        // Battery previous voltage
 static int BatCheckCount  = 0;
 //=========================================================
 //  Arduino setup function
@@ -453,6 +454,8 @@ void manual_pilot()
 //=========================================================
 void loop()
 {
+  uint32_t aVoltage   = 0;           // Battery ave voltage
+
   //=========================================================
   //  get VL53L0X TOF sensor value
   //    S0: left S1: center S2: right
@@ -550,13 +553,15 @@ void loop()
     BatCheckCount = 0;
     esp_adc_cal_get_voltage(ADC_CHANNEL_5, &adcChar, &voltage);
     voltage = voltage / 0.252;        // default : 0.244
-    if (voltage < 5800 && voltage > 1000) {
+    aVoltage = (voltage + pVoltage) / 2;
+    if (aVoltage < 6000 && voltage > 1000) {
       RC_halt();
       Serial.print("Battery Voltage = ");
       Serial.print(voltage);
       Serial.println(" System Halt !");
       while(true);                // system halt
     }
+    pVoltage = voltage;
   }
 //=========================================================
 //   Start Driving!

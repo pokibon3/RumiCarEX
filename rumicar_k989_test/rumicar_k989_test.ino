@@ -78,6 +78,7 @@ void loop()
 #endif
 
   sensor_print();
+/*
   //s0 = s2 = 0;  // for debug
 
   if (abs(s0 - s2) < 50) {
@@ -97,5 +98,5 @@ void loop()
   }else{
     RC_drive(FORWARD,200);
   }
-
+*/
 }
